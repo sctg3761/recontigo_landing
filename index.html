@@ -85,7 +85,7 @@
 
       try {
         // Direct REST API call to Supabase database (no build tools needed!)
-        const response = await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
+        const response = await fetch(`${SUPABASE_URL}/waitlist`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
