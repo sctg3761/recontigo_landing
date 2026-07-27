@@ -67,10 +67,10 @@
 
   <!-- JS SCRIPT TO CONNECT DIRECTLY TO SUPABASE -->
   <script>
-// Supabase credentials retrieved from your dashboard
+    // Supabase credentials retrieved from your dashboard
     const SUPABASE_URL = "https://bpjltpamqjzqelalhndj.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwamx0cGFtcWp6cWVsYWxobmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5MTQzOTgsImV4cCI6MjEwMDQ5MDM5OH0.F06PCglWUu1xqD15mWKA_J2ePoAh21C9oRQLln6X0uc";
-    
+
     const form = document.getElementById('waitlist-form');
     const messageDiv = document.getElementById('message');
     const submitBtn = document.getElementById('submit-btn');
@@ -85,7 +85,7 @@
 
       try {
         // Direct REST API call to Supabase database (no build tools needed!)
-        const response = await fetch(`${SUPABASE_URL}/waitlist`, {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -122,4 +122,3 @@
 
 </body>
 </html>
-
