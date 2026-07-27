@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recontigo - Coming Soon</title>
+  <style>
+    /* Simple, modern layout styling */
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+    }
+    h1 { font-size: 2rem; margin-bottom: 12px; }
+    p { color: #475569; font-size: 1rem; line-height: 1.5; margin-bottom: 24px; }
+    form { display: flex; flex-direction: column; gap: 12px; }
+    input[type="email"] {
+      padding: 12px 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+    button {
+      padding: 12px 16px;
+      background-color: #0f172a;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:hover { background-color: #1e293b; }
+    #message { margin-top: 16px; font-weight: 500; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <!-- EDIT YOUR PAGE TEXT HERE -->
+    <h1>Recontigo</h1>
+    <p>We are building a new community project. Enter your email below to join the waitlist and get early access.</p>
+
+    <!-- EMAIL CAPTURE FORM -->
+    <form id="waitlist-form">
+      <input type="email" id="email" placeholder="Enter your email address" required>
+      <button type="submit" id="submit-btn">Join Waitlist</button>
+    </form>
+    
+    <div id="message"></div>
+  </div>
+
+  <!-- JS SCRIPT TO CONNECT DIRECTLY TO SUPABASE -->
+  <script>
+    // Supabase credentials retrieved from your dashboard
+    const SUPABASE_URL = "https://bpjltpamqjzqelalhndj.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJwamx0cGFtcWp6cWVsYWxobmRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5MTQzOTgsImV4cCI6MjEwMDQ5MDM5OH0.F06PCglWUu1xqD15mWKA_J2ePoAh21C9oRQLln6X0uc";
+
+    const form = document.getElementById('waitlist-form');
+    const messageDiv = document.getElementById('message');
+    const submitBtn = document.getElementById('submit-btn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Submitting...';
+      messageDiv.textContent = '';
+
+      try {
+        // Direct REST API call to Supabase database (no build tools needed!)
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/waitlist`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+            'Prefer': 'return=minimal'
+          },
+          body: JSON.stringify({ email: email })
+        });
+
+        if (response.ok) {
+          messageDiv.style.color = '#16a34a';
+          messageDiv.textContent = 'Thank you! You have been added to the waitlist.';
+          form.reset();
+        } else {
+          const errData = await response.json();
+          if (errData.code === '23505') { // Postgres duplicate key error
+            messageDiv.style.color = '#ca8a04';
+            messageDiv.textContent = 'This email is already on the waitlist!';
+          } else {
+            messageDiv.style.color = '#dc2626';
+            messageDiv.textContent = 'Something went wrong. Please try again.';
+          }
+        }
+      } catch (err) {
+        messageDiv.style.color = '#dc2626';
+        messageDiv.textContent = 'Connection error. Please try again later.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Join Waitlist';
+      }
+    });
+  </script>
+
+</body>
+</html>
